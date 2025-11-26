@@ -9,7 +9,7 @@ function TodoList() {
     { id: 3, Text: 'Разобраться с состоянием', completed: false },
   ]);
   const [newTodo, setNewTodo] = useState('');
-
+  const [isSpaneEdit, setIsSpaneEdit] = useState(false);
   const addTodo = () => {
     if (newTodo.trim === '') return;
 
@@ -30,6 +30,12 @@ function TodoList() {
 
   const toggleTodo = (id) => {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
+  };
+
+  const editTodo = (id) => {
+    setIsSpaneEdit(true);
+    console.log(id);
+    // setTodos(todos.map((todo) => (todo.id === id ? { ...todo, Text: 'Test' } : todo)));
   };
 
   const handleKeyPress = (e) => {
@@ -60,7 +66,9 @@ function TodoList() {
         {todos.map((todo) => (
           <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
             <input type="checkbox" checked={todo.completed} onChange={() => toggleTodo(todo.id)} className="todo-checkbox" />
-            <span className="todo-text">{todo.Text}</span>
+            <span id="spanedit" suppressContentEditableWarning={isSpaneEdit} className="todo-text" onDoubleClick={() => editTodo(todo.id)}>
+              {todo.Text}
+            </span>
             <button onClick={() => delTodo(todo.id)} className="delete-btn">
               ❌
             </button>
