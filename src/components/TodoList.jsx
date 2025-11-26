@@ -1,5 +1,3 @@
-// import { useState } from 'react';
-
 import { useState } from 'react';
 
 function TodoList() {
@@ -9,7 +7,9 @@ function TodoList() {
     { id: 3, Text: 'Разобраться с состоянием', completed: false },
   ]);
   const [newTodo, setNewTodo] = useState('');
-  const [isSpaneEdit, setIsSpaneEdit] = useState(false);
+  const [editingId, setEditingId] = useState(null); // ID редактируемой задачи
+  const [editingText, setEditingText] = useState(''); // Текст для редактирования
+
   const addTodo = () => {
     if (newTodo.trim === '') return;
 
@@ -24,6 +24,12 @@ function TodoList() {
     setNewTodo('');
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTodo();
+    }
+  };
+
   const delTodo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
@@ -32,17 +38,32 @@ function TodoList() {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
   };
 
-  const editTodo = (id) => {
-    setIsSpaneEdit(true);
-    console.log(id);
-    // setTodos(todos.map((todo) => (todo.id === id ? { ...todo, Text: 'Test' } : todo)));
-  };
+  const startEdit = (id, currentText) =>{
+    setEditingId(id);
+    setEditingText(currentText);
+  }
+  
+  const saveEdit = ()=>{
+    if (editingText.trim === '') return;
+    setTodos(todos.map((todo) => (todo.id === editingId ? { ...todo, Text: editingText } : todo)));
 
-  const handleKeyPress = (e) => {
+    setEditingId(null);
+    setEditingText('');
+  }
+  const cencelEdit = () =>{
+    setEditingId(null);
+    setEditingText('');
+  }
+  const handleEditKeyPress = (e) => {
     if (e.key === 'Enter') {
-      addTodo();
+      saveEdit();
+    } else if (e.key === 'Escape'){
+      cencelEdit();
     }
   };
+
+
+
 
   return (
     <div className="todo-list">
@@ -66,12 +87,35 @@ function TodoList() {
         {todos.map((todo) => (
           <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
             <input type="checkbox" checked={todo.completed} onChange={() => toggleTodo(todo.id)} className="todo-checkbox" />
-            <span id="spanedit" suppressContentEditableWarning={isSpaneEdit} className="todo-text" onDoubleClick={() => editTodo(todo.id)}>
-              {todo.Text}
-            </span>
-            <button onClick={() => delTodo(todo.id)} className="delete-btn">
-              ❌
-            </button>
+
+            {editingId === todo.id ? (  
+              <div className="edit-container">
+                <input type="text" 
+                value={editingText}
+                onChange={(e) => setEditingText(e.target.value)}
+                onKeyPress={handleEditKeyPress}
+                onBlur={saveEdit}
+                className="edit-input"
+                autoFocus
+                />
+                <button onClick={saveEdit} className="save-btn">💾</button>
+                <button onClick={cencelEdit} className="cancel-btn">❌</button>
+              </div>
+            ):(
+              <>
+                <span className="todo-text" onDoubleClick={() => startEdit(todo.id, todo.Text)}>
+                {todo.Text}
+                </span>
+                <button onClick={() => delTodo(todo.id)} className="delete-btn">
+                ❌
+                </button>
+              </>
+            )}
+            
+
+
+
+            
           </li>
         ))}
       </ul>

@@ -144,3 +144,39 @@
   color: #6d6b7d;
   font-size: 0.9rem;
 }
+
+.edit-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.edit-input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.save-btn, .cancel-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 5px;
+}
+
+.save-btn:hover {
+  background-color: #e8f5e8;
+}
+
+.cancel-btn:hover {
+  background-color: #ffe8e8;
+}
+
+.todo-text {
+  cursor: pointer;
+  flex: 1;
+}
