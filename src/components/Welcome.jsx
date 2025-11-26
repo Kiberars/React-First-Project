@@ -19,8 +19,8 @@ function Welcome(props) {
     <div className={isDark ? 'welcome-dark' : 'welcome-light'}>
       <h2>Добро пожаловать, {props.name}</h2>
       <p>Это новый реакт компонент</p>
-      <button onClick={toggleTheme}>{isDark ? '🌙 Темная тема' : '☀️ Светлая тема'}</button>
       {props.message && <p className="message">{props.message}</p>}
+      <button onClick={toggleTheme}>{isDark ? '🌙 Темная тема' : '☀️ Светлая тема'}</button>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import Welcome from './components/welcome';
+import TodoList from './components/TodoList';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -13,8 +14,7 @@ function App() {
     <div className="App">
       <header className="App-Header">
         <h1>Мое первое React приложение! 🚀</h1>
-        <Welcome name="Ars" message="text" />
-        <Welcome name="Разработчик" message="Это крутой путь!" />
+
         <div className="card" onClick={increment}>
           <button>Кликов: {count}</button>
           <p>
@@ -22,6 +22,8 @@ function App() {
           </p>
         </div>
       </header>
+      <Welcome name="Арсений" message="Начало положено" />
+	  <TodoList/>
     </div>
   );
 }
