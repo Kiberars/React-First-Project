@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function TodoList() {
-  const [todos, setTodos] = useState([
+  const [todos, setTodos] = useState(() => {
+    const savedTodos = localStorage.getItem('todos');
+    return savedTodos ? JSON.parse(savedTodos) : [
     { id: 1, Text: 'Изучить React', completed: true },
     { id: 2, Text: 'Создать первый компонент', completed: true },
     { id: 3, Text: 'Разобраться с состоянием', completed: false },
-  ]);
+  ];
+});
   const [newTodo, setNewTodo] = useState('');
   const [editingId, setEditingId] = useState(null); // ID редактируемой задачи
   const [editingText, setEditingText] = useState(''); // Текст для редактирования
+
+
+  useEffect(()=>{
+    localStorage.setItem('todos', JSON.stringify(todos));
+  },todos)
 
   const addTodo = () => {
     if (newTodo.trim === '') return;
@@ -62,7 +70,28 @@ function TodoList() {
     }
   };
 
+  // Функция для экспорта данных
+  const exportData = () =>{
+    const dataStr = JSON.stringify(todos);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'todos.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
 
+  // Функция для импорта данных
+  const importData = (event) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(event.target.files[0], "UTF-8");
+    fileReader.onload = e => {
+      const importedTodos = JSON.parse(e.target.result);
+      setTodos(importedTodos);
+    };
+  };
 
 
   return (
@@ -123,6 +152,13 @@ function TodoList() {
       <div className="todo-stats">
         Всего задачь: {todos.length} | Выполнено: {todos.filter((todo) => todo.completed).length} | Не выполнено:{' '}
         {todos.filter((todo) => !todo.completed).length}
+      </div>
+
+       {/* Отладочная информация */}
+      <div className="debug-info">
+        <h4>Отладочная информация (localStorage):</h4>
+        <button onClick={() => console.log(localStorage)}>Показать localStorage</button>
+        <button onClick={() => console.log(JSON.parse(localStorage.getItem('todos')))}>Показать todos</button>
       </div>
     </div>
   );
