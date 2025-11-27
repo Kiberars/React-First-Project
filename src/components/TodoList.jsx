@@ -12,6 +12,7 @@ function TodoList() {
   const [newTodo, setNewTodo] = useState('');
   const [editingId, setEditingId] = useState(null); // ID редактируемой задачи
   const [editingText, setEditingText] = useState(''); // Текст для редактирования
+  const [filter, setFilter] = useState('all')
 
 
   useEffect(()=>{
@@ -70,30 +71,21 @@ function TodoList() {
     }
   };
 
-  // Функция для экспорта данных
-  const exportData = () =>{
-    const dataStr = JSON.stringify(todos);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'todos.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-  };
 
-  // Функция для импорта данных
-  const importData = (event) => {
-    const fileReader = new FileReader();
-    fileReader.readAsText(event.target.files[0], "UTF-8");
-    fileReader.onload = e => {
-      const importedTodos = JSON.parse(e.target.result);
-      setTodos(importedTodos);
-    };
-  };
+  const getFilteredTodos = ()=>{
+    switch(filter){
+      case 'active':
+        return todos.filter( todo => !todo.completed)
+      case 'completed':
+        return todos.filter( todo => todo.completed)
+      case 'all':
+      default:
+        return todos
+    }
+  }
 
 
+  const filteredTodos = getFilteredTodos()
   return (
     <div className="todo-list">
       <h3>Список задачь</h3>
@@ -112,8 +104,30 @@ function TodoList() {
         </button>
       </div>
 
+      {/* 🔥 КНОПКИ ФИЛЬТРАЦИИ */}
+    <div className="filter-buttons">
+      <button 
+        className={filter === 'all' ? 'filter-btn active' : 'filter-btn'}
+        onClick={() => setFilter('all')}
+      >
+        Все
+      </button>
+      <button 
+        className={filter === 'active' ? 'filter-btn active' : 'filter-btn'}
+        onClick={() => setFilter('active')}
+      >
+        Активные
+      </button>
+      <button 
+        className={filter === 'completed' ? 'filter-btn active' : 'filter-btn'}
+        onClick={() => setFilter('completed')}
+      >
+        Выполненные
+      </button>
+    </div>
+
       <ul className="todos">
-        {todos.map((todo) => (
+        {filteredTodos.map((todo) => (
           <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
             <input type="checkbox" checked={todo.completed} onChange={() => toggleTodo(todo.id)} className="todo-checkbox" />
 
@@ -150,8 +164,10 @@ function TodoList() {
       </ul>
 
       <div className="todo-stats">
-        Всего задачь: {todos.length} | Выполнено: {todos.filter((todo) => todo.completed).length} | Не выполнено:{' '}
-        {todos.filter((todo) => !todo.completed).length}
+        Всего задачь: {todos.length} 
+        | Выполнено: {todos.filter((todo) => todo.completed).length} 
+        | Не выполнено: {todos.filter((todo) => !todo.completed).length}
+        | Показано: {filteredTodos.length}
       </div>
 
        {/* Отладочная информация */}
